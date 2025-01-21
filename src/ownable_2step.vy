@@ -38,14 +38,15 @@ pending_owner: public(address)
 
 
 @deploy
+@payable
 def __init__():
     """
-    @dev Initializes the contract setting the deployer as the initial owner
-    @param owner The address of the initial owner
+    @dev To omit the opcodes for checking the `msg.value`
+         in the creation-time EVM bytecode, the constructor
+         is declared as `payable`.
+    @notice Initializes the contract setting the deployer as the initial owner
     """
-    # assert owner != empty(address), "!owner"
-    # self.owner = owner
-    pass
+    self.owner = msg.sender
 
 
 # ============================================================================================

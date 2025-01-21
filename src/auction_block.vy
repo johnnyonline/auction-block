@@ -7,21 +7,10 @@
 @notice auction_block.vy facilitates creating, bidding on, and settling auctions
 """
 
-
 from ethereum.ercs import IERC20
 
-# import ownable_2step as ownable
-# import pausable
-# import ownable_2step
-# from . import ownable_2step
-from . import ownable_2step as ownable
-initializes: ownable
-
-from . import pausable
-initializes: pausable[ownable_2step := ownable]
-# initializes: o2[ownable := ow]
-
-
+import ownable_2step as ownable
+import pausable
 
 
 # ============================================================================================
@@ -29,31 +18,20 @@ initializes: pausable[ownable_2step := ownable]
 # ============================================================================================
 
 
-# initializes: ownable
-# # exports: (
-# #     ownable.owner,
-# #     ownable.pending_owner,
-# #     ownable.transfer_ownership,
-# #     ownable.accept_ownership,
-# # )
+initializes: ownable
+exports: (
+    ownable.owner,
+    ownable.pending_owner,
+    ownable.transfer_ownership,
+    ownable.accept_ownership,
+)
 
-
-# initializes: pausable[ownable := ownable]
-# exports: (
-#     pausable.paused,
-#     pausable.pause,
-#     pausable.unpause,
-# )
-# exports: (
-#     # from `ownable`
-#     ownable.transfer_ownership,
-#     ownable.accept_ownership,
-#     ownable.owner,
-#     # from `pausable`
-#     pausable.paused,
-#     pausable.pause,
-#     pausable.unpause,
-# )
+initializes: pausable[ownable := ownable]
+exports: (
+    pausable.paused,
+    pausable.pause,
+    pausable.unpause,
+)
 
 
 # ============================================================================================
@@ -72,10 +50,11 @@ struct Auction:
 
 
 flag ApprovalStatus:
-    Nothing # Default value, indicating no approval
-    BidOnly # Approved for bid only
-    WithdrawOnly # Approved for withdraw only
-    BidAndWithdraw # Approved for both bid and withdraw
+    Nothing  # Default value, indicating no approval
+    BidOnly  # Approved for bid only
+    WithdrawOnly  # Approved for withdraw only
+    BidAndWithdraw  # Approved for both bid and withdraw
+
 
 # ============================================================================================
 # Events
@@ -156,11 +135,11 @@ event FeeUpdated:
 
 PRECISION: constant(uint256) = 100
 MAX_WITHDRAWALS: constant(uint256) = 100
-MIN_DURATION: constant(uint256) = 3600 # 1 hour
-MAX_DURATION: constant(uint256) = 259200 # 3 days
-MIN_BID_INCREMENT_PERCENTAGE_: constant(uint256) = 2 # 2%
-MAX_BID_INCREMENT_PERCENTAGE: constant(uint256) = 15 # 15%
-MAX_FEE: constant(uint256) = 10 # 10%
+MIN_DURATION: constant(uint256) = 3600  # 1 hour
+MAX_DURATION: constant(uint256) = 259200  # 3 days
+MIN_BID_INCREMENT_PERCENTAGE_: constant(uint256) = 2  # 2%
+MAX_BID_INCREMENT_PERCENTAGE: constant(uint256) = 15  # 15%
+MAX_FEE: constant(uint256) = 10  # 10%
 
 
 # ============================================================================================
@@ -206,7 +185,10 @@ def __init__(
     fee_receiver: address,
     fee: uint256,
 ):
-    assert (min_bid_increment_percentage >= MIN_BID_INCREMENT_PERCENTAGE_ and min_bid_increment_percentage <= MAX_BID_INCREMENT_PERCENTAGE), "!min_bid_increment_percentage"
+    assert (
+        min_bid_increment_percentage >= MIN_BID_INCREMENT_PERCENTAGE_
+        and min_bid_increment_percentage <= MAX_BID_INCREMENT_PERCENTAGE
+    ), "!min_bid_increment_percentage"
     assert duration >= MIN_DURATION and duration <= MAX_DURATION, "!duration"
     assert payment_token != empty(address), "!payment_token"
     assert proceeds_receiver != empty(address), "!proceeds_receiver"
@@ -310,27 +292,35 @@ def withdraw(auction_id: uint256, on_behalf_of: address = msg.sender):
     pending: uint256 = self.auction_pending_returns[auction_id][msg.sender]
     assert pending > 0, "!pending"
     self.auction_pending_returns[auction_id][msg.sender] = 0
-    assert extcall self.payment_token.transfer(msg.sender, pending, default_return_value=True), "!transfer"
+    assert extcall self.payment_token.transfer(
+        msg.sender, pending, default_return_value=True
+    ), "!transfer"
     log Withdraw(auction_id, on_behalf_of, msg.sender, pending)
 
 
 @external
 @nonreentrant
-def withdraw_multiple(auction_ids: DynArray[uint256, MAX_WITHDRAWALS], on_behalf_of: address = msg.sender):
+def withdraw_multiple(
+    auction_ids: DynArray[uint256, MAX_WITHDRAWALS],
+    on_behalf_of: address = msg.sender,
+):
     """
     @dev Withdraw ERC20 tokens from multiple auctions
     """
     self._check_caller(on_behalf_of, msg.sender, ApprovalStatus.WithdrawOnly)
     total_pending: uint256 = 0
     for auction_id: uint256 in auction_ids:
-        pending: uint256 = self.auction_pending_returns[auction_id][on_behalf_of]
+        pending: uint256 = self.auction_pending_returns[auction_id][
+            on_behalf_of
+        ]
         if pending > 0:
             total_pending += pending
             self.auction_pending_returns[auction_id][on_behalf_of] = 0
             log Withdraw(auction_id, on_behalf_of, msg.sender, pending)
-
     assert total_pending > 0, "!pending"
-    assert extcall self.payment_token.transfer(on_behalf_of, total_pending, default_return_value=True), "!transfer"
+    assert extcall self.payment_token.transfer(
+        on_behalf_of, total_pending, default_return_value=True
+    ), "!transfer"
 
 
 # ============================================================================================
@@ -371,7 +361,10 @@ def set_reserve_price(reserve_price: uint256):
 @external
 def set_min_bid_increment_percentage(percentage: uint256):
     ownable._check_owner()
-    assert (percentage >= MIN_BID_INCREMENT_PERCENTAGE_ and percentage <= MAX_BID_INCREMENT_PERCENTAGE), "!percentage"
+    assert (
+        percentage >= MIN_BID_INCREMENT_PERCENTAGE_
+        and percentage <= MAX_BID_INCREMENT_PERCENTAGE
+    ), "!percentage"
     self.min_bid_increment_percentage = percentage
     log AuctionMinBidIncrementPercentageUpdated(percentage)
 
@@ -457,9 +450,13 @@ def _settle_auction(auction_id: uint256):
         if fee > 0:
             fee_amount: uint256 = _auction.amount * fee // PRECISION
             owner_amount -= fee_amount
-            assert extcall self.payment_token.transfer(self.fee_receiver, fee_amount, default_return_value=True), "!fee transfer"
+            assert extcall self.payment_token.transfer(
+                self.fee_receiver, fee_amount, default_return_value=True
+            ), "!fee transfer"
 
-        assert extcall self.payment_token.transfer(self.proceeds_receiver, owner_amount, default_return_value=True), "!owner transfer"
+        assert extcall self.payment_token.transfer(
+            self.proceeds_receiver, owner_amount, default_return_value=True
+        ), "!owner transfer"
 
     log AuctionSettled(_auction.auction_id, _auction.bidder, _auction.amount)
 
@@ -477,15 +474,18 @@ def _create_bid(auction_id: uint256, total_bid: uint256, bidder: address):
     if pending_amount > 0:
         if pending_amount >= total_bid:
             # Use entire bid amount from pending returns
-            self.auction_pending_returns[auction_id][bidder] = pending_amount - total_bid
+            self.auction_pending_returns[auction_id][bidder] = (
+                pending_amount - total_bid
+            )
             tokens_needed = 0
         else:
             # Use all pending returns and require additional tokens
             self.auction_pending_returns[auction_id][bidder] = 0
             tokens_needed = total_bid - pending_amount
-
     if tokens_needed > 0:
-        assert extcall self.payment_token.transferFrom(bidder, self, tokens_needed, default_return_value=True), "!transfer"
+        assert extcall self.payment_token.transferFrom(
+            bidder, self, tokens_needed, default_return_value=True
+        ), "!transfer"
 
     last_bidder: address = _auction.bidder
     if last_bidder != empty(address):
@@ -541,7 +541,9 @@ def _minimum_additional_bid(
 
 @internal
 @view
-def _check_caller(_account: address, _caller: address, _req_status: ApprovalStatus):
+def _check_caller(
+    _account: address, _caller: address, _req_status: ApprovalStatus
+):
     if _account != _caller:
         _status: ApprovalStatus = self.approved_caller[_account][_caller]
         if _status == ApprovalStatus.BidAndWithdraw:

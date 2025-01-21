@@ -7,8 +7,7 @@
 @notice pauseable.vy allows to implement an emergency stop mechanism that can be triggered by an authorized account
 """
 
-
-from . import ownable_2step
+import ownable_2step as ownable
 
 
 # ============================================================================================
@@ -17,7 +16,7 @@ from . import ownable_2step
 
 
 # initializes: ownable
-uses: ownable_2step
+uses: ownable
 # exports: (
 #     ownable.owner,
 #     ownable.pending_owner,
@@ -52,20 +51,18 @@ paused: public(bool)
 # ============================================================================================
 
 
-# @deploy
-# def __init__(owner: address):
-#     """
-#     @dev Initializes the contract with the owner
-#     @param owner The address of the owner
-#     """
-#     ownable.__init__(owner)
 @deploy
+@payable
 def __init__():
-    # """
-    # @dev Initializes the contract with the owner
-    # @param owner The address of the owner
-    # """
-    # ownable.__init__(owner)
+    """
+    @dev To omit the opcodes for checking the `msg.value`
+         in the creation-time EVM bytecode, the constructor
+         is declared as `payable`.
+    @notice At initialisation time, the `owner` role will
+            be assigned to the `msg.sender` since we `uses`
+            the `ownable` module, which implements the
+            aforementioned logic at contract creation time.
+    """
     pass
 
 
@@ -79,7 +76,7 @@ def pause():
     """
     @dev Pauses the contract
     """
-    ownable_2step._check_owner()
+    ownable._check_owner()
     self._check_unpaused()
     self.paused = True
     log Paused(msg.sender)
@@ -90,7 +87,7 @@ def unpause():
     """
     @dev Unpauses the contract
     """
-    ownable_2step._check_owner()
+    ownable._check_owner()
     self._check_paused()
     self.paused = False
     log Unpaused(msg.sender)
