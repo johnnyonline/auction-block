@@ -10,9 +10,18 @@
 
 from ethereum.ercs import IERC20
 
-import pausable
-import ownable_2step as ownable
+# import ownable_2step as ownable
+# import pausable
 # import ownable_2step
+# from . import ownable_2step
+from . import ownable_2step as ownable
+initializes: ownable
+
+from . import pausable
+initializes: pausable[ownable_2step := ownable]
+# initializes: o2[ownable := ow]
+
+
 
 
 # ============================================================================================
@@ -20,16 +29,16 @@ import ownable_2step as ownable
 # ============================================================================================
 
 
-initializes: ownable
-# exports: (
-#     ownable.owner,
-#     ownable.pending_owner,
-#     ownable.transfer_ownership,
-#     ownable.accept_ownership,
-# )
+# initializes: ownable
+# # exports: (
+# #     ownable.owner,
+# #     ownable.pending_owner,
+# #     ownable.transfer_ownership,
+# #     ownable.accept_ownership,
+# # )
 
 
-initializes: pausable[ownable := ownable]
+# initializes: pausable[ownable := ownable]
 # exports: (
 #     pausable.paused,
 #     pausable.pause,
@@ -62,7 +71,7 @@ struct Auction:
     ipfs_hash: String[46]
 
 
-enum ApprovalStatus:
+enum ApprovalStatus: # use Flags
     Nothing # Default value, indicating no approval
     BidOnly # Approved for bid only
     WithdrawOnly # Approved for withdraw only
@@ -204,8 +213,8 @@ def __init__(
     assert fee_receiver != empty(address), "!fee_receiver"
     assert fee <= MAX_FEE, "!fee"
 
-    ownable.__init__(msg.sender)
-    # pausable.__init__(msg.sender)
+    ownable.__init__()
+    pausable.__init__()
 
     self.time_buffer = time_buffer
     self.reserve_price = reserve_price

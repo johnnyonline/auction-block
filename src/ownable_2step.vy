@@ -38,13 +38,14 @@ pending_owner: public(address)
 
 
 @deploy
-def __init__(owner: address):
+def __init__():
     """
     @dev Initializes the contract setting the deployer as the initial owner
     @param owner The address of the initial owner
     """
-    assert owner != empty(address), "!owner"
-    self.owner = owner
+    # assert owner != empty(address), "!owner"
+    # self.owner = owner
+    pass
 
 
 # ============================================================================================

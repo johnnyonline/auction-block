@@ -8,7 +8,7 @@
 """
 
 
-import ownable_2step as ownable
+from . import ownable_2step
 
 
 # ============================================================================================
@@ -17,7 +17,7 @@ import ownable_2step as ownable
 
 
 # initializes: ownable
-uses: ownable
+uses: ownable_2step
 # exports: (
 #     ownable.owner,
 #     ownable.pending_owner,
@@ -59,6 +59,14 @@ paused: public(bool)
 #     @param owner The address of the owner
 #     """
 #     ownable.__init__(owner)
+@deploy
+def __init__():
+    # """
+    # @dev Initializes the contract with the owner
+    # @param owner The address of the owner
+    # """
+    # ownable.__init__(owner)
+    pass
 
 
 # ============================================================================================
@@ -71,7 +79,7 @@ def pause():
     """
     @dev Pauses the contract
     """
-    ownable._check_owner()
+    ownable_2step._check_owner()
     self._check_unpaused()
     self.paused = True
     log Paused(msg.sender)
@@ -82,7 +90,7 @@ def unpause():
     """
     @dev Unpauses the contract
     """
-    ownable._check_owner()
+    ownable_2step._check_owner()
     self._check_paused()
     self.paused = False
     log Unpaused(msg.sender)
