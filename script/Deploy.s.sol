@@ -24,11 +24,11 @@ contract Deploy is Script {
     TokenMock public token;
     IAuctionBlock public auction;
 
-    uint256 public constant TIME_BUFFER = 0;
-    uint256 public constant RESERVE_PRICE = 0;
-    uint256 public constant MIN_BID_INCREMENT_PERCENTAGE = 0;
-    uint256 public constant DURATION = 0;
-    uint256 public constant FEE = 0;
+    uint256 public constant TIME_BUFFER = 300; // 5 minutes
+    uint256 public constant RESERVE_PRICE = 1 ether;
+    uint256 public constant MIN_BID_INCREMENT_PERCENTAGE = 10; // 10%
+    uint256 public constant DURATION = 1 hours;
+    uint256 public constant FEE = 10; // 10%
 
     function run() public {
         uint256 _pk = isTest ? 42069 : vm.envUint("DEPLOYER_PRIVATE_KEY");
