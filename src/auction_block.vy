@@ -71,7 +71,7 @@ struct Auction:
     ipfs_hash: String[46]
 
 
-enum ApprovalStatus: # use Flags
+flag ApprovalStatus:
     Nothing # Default value, indicating no approval
     BidOnly # Approved for bid only
     WithdrawOnly # Approved for withdraw only

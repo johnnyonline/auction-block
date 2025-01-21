@@ -2,5 +2,6 @@
 src = "src"
 out = "out"
 libs = ["lib"]
+skip = ["src/ownable_2step.vy", "src/pausable.vy" ]
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
