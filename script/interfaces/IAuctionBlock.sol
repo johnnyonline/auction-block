@@ -15,13 +15,6 @@ interface IAuctionBlock is IPausable, IOwnable2Step {
         string ipfs_hash;
     }
 
-    enum ApprovalStatus {
-        Nothing,
-        BidOnly,
-        WithdrawOnly,
-        BidAndWithdraw
-    }
-
     // Constants
     function PRECISION() external view returns (uint256);
     function MAX_WITHDRAWALS() external view returns (uint256);
@@ -44,7 +37,7 @@ interface IAuctionBlock is IPausable, IOwnable2Step {
     function auction_list(uint256) external view returns (Auction memory);
 
     // User settings
-    function approved_caller(address, address) external view returns (ApprovalStatus);
+    function approved_caller(address, address) external view returns (uint256);
 
     // Payment token
     function payment_token() external view returns (address);
@@ -61,12 +54,13 @@ interface IAuctionBlock is IPausable, IOwnable2Step {
     // Mutated functions
     function create_auction(string memory _ipfs_hash) external returns (uint256);
     function settle_auction(uint256 auction_id) external;
+    function create_bid(uint256 auction_id, uint256 bid_amount) external;
     function create_bid(uint256 auction_id, uint256 bid_amount, address on_behalf_of) external;
     function withdraw(uint256 auction_id, address on_behalf_of) external;
     function withdraw_multiple(uint256[] memory auction_ids, address on_behalf_of) external;
 
     // User settings
-    function set_approved_caller(address caller, ApprovalStatus status) external;
+    function set_approved_caller(address caller, uint256 status) external;
 
     // Owner functions
     function set_time_buffer(uint256 time_buffer) external;

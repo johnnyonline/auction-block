@@ -6,8 +6,13 @@ import "../script/Deploy.s.sol";
 import "forge-std/Test.sol";
 
 abstract contract Base is Deploy, Test {
+    string public constant IPFS_HASH = "ipfs_hash";
     address public constant alice = address(420);
     address public constant bob = address(420420);
+
+    uint256 public constant MIN_FUZZ = 10_000;
+    uint256 public constant MAX_FUZZ = 100_000 ether;
+    uint256 public constant BID_ONLY = 2;
 
     function setUp() public virtual {
         // notify deplyment script that this is a test

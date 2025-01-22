@@ -422,7 +422,7 @@ def _create_auction(ipfs_hash: String[46]) -> uint256:
         ipfs_hash=ipfs_hash,
     )
 
-    log AuctionCreated(self.auction_id, _start_time, _end_time, ipfs_hash)
+    log AuctionCreated(_auction_id, _start_time, _end_time, ipfs_hash)
 
     return _auction_id
 
