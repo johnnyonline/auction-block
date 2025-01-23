@@ -92,7 +92,7 @@ contract Deploy is Script {
     }
 }
 
-// Chain 421614
+// Chain 421614 (verified at https://arbitrum-sepolia.blockscout.com/address/0x6B1E09821E5837F8082B97dE28aE389D7aaDabcb?tab=contract)
 // Deployer address: 0x318d0059efE546b5687FA6744aF4339391153981
 // Owner address: 0x318d0059efE546b5687FA6744aF4339391153981
 // Proceeds receiver address: 0x318d0059efE546b5687FA6744aF4339391153981
