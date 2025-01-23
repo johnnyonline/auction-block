@@ -35,17 +35,15 @@ contract Deploy is Script {
         VmSafe.Wallet memory _wallet = vm.createWallet(_pk);
         deployer = _wallet.addr;
 
-        uint256 _ownerPk = isTest ? 69420 : vm.envUint("OWNER_PRIVATE_KEY");
-        VmSafe.Wallet memory _ownerWallet = vm.createWallet(_ownerPk);
-        owner = _ownerWallet.addr;
-
-        uint256 _proceedsReceiverPk = isTest ? 6942069 : vm.envUint("PROCEEDS_RECEIVER_PRIVATE_KEY");
-        VmSafe.Wallet memory _proceedsReceiverWallet = vm.createWallet(_proceedsReceiverPk);
-        proceedsReceiver = _proceedsReceiverWallet.addr;
-
-        uint256 _feeReceiverPk = isTest ? 6942069420 : vm.envUint("FEE_RECEIVER_PRIVATE_KEY");
-        VmSafe.Wallet memory _feeReceiverWallet = vm.createWallet(_feeReceiverPk);
-        feeReceiver = _feeReceiverWallet.addr;
+        if (isTest) {
+            owner = address(69420);
+            proceedsReceiver = address(6942069);
+            feeReceiver = address(6942069420);
+        } else {
+            owner = deployer;
+            proceedsReceiver = deployer;
+            feeReceiver = deployer;
+        }
 
         vm.startBroadcast(_pk);
 
@@ -93,3 +91,11 @@ contract Deploy is Script {
         }
     }
 }
+
+// Chain 421614
+// Deployer address: 0x318d0059efE546b5687FA6744aF4339391153981
+// Owner address: 0x318d0059efE546b5687FA6744aF4339391153981
+// Proceeds receiver address: 0x318d0059efE546b5687FA6744aF4339391153981
+// Fee receiver address: 0x318d0059efE546b5687FA6744aF4339391153981
+// Token address: 0x26307a19096f5fa9eDB46784f10d5CAaeeC90B08
+// Auction address: 0x6B1E09821E5837F8082B97dE28aE389D7aaDabcb
