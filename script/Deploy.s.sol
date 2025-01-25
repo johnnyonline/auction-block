@@ -92,10 +92,10 @@ contract Deploy is Script {
     }
 }
 
-// Chain 421614 (verified at https://arbitrum-sepolia.blockscout.com/address/0x6B1E09821E5837F8082B97dE28aE389D7aaDabcb?tab=contract)
+// Chain 421614
 // Deployer address: 0x318d0059efE546b5687FA6744aF4339391153981
 // Owner address: 0x318d0059efE546b5687FA6744aF4339391153981
 // Proceeds receiver address: 0x318d0059efE546b5687FA6744aF4339391153981
 // Fee receiver address: 0x318d0059efE546b5687FA6744aF4339391153981
-// Token address: 0x26307a19096f5fa9eDB46784f10d5CAaeeC90B08
-// Auction address: 0x6B1E09821E5837F8082B97dE28aE389D7aaDabcb
+// Token address: 0x1884A8C40bE2273c3700Ad2A0fA252047A215e3A
+// Auction address: 0x2921843d01da7026edC374A416Cf9F7d32Ba4296

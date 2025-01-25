@@ -26,6 +26,7 @@ exports: (
     ownable.accept_ownership,
 )
 
+
 initializes: pausable[ownable := ownable]
 exports: (
     pausable.paused,
@@ -47,6 +48,11 @@ struct Auction:
     bidder: address
     settled: bool
     ipfs_hash: String[46]
+
+
+# ============================================================================================
+# Flags
+# ============================================================================================
 
 
 flag ApprovalStatus:
@@ -289,11 +295,11 @@ def withdraw(auction_id: uint256, on_behalf_of: address = msg.sender):
     @dev Withdraw ERC20 tokens after losing auction
     """
     self._check_caller(on_behalf_of, msg.sender, ApprovalStatus.WithdrawOnly)
-    pending: uint256 = self.auction_pending_returns[auction_id][msg.sender]
+    pending: uint256 = self.auction_pending_returns[auction_id][on_behalf_of]
     assert pending > 0, "!pending"
-    self.auction_pending_returns[auction_id][msg.sender] = 0
+    self.auction_pending_returns[auction_id][on_behalf_of] = 0
     assert extcall self.payment_token.transfer(
-        msg.sender, pending, default_return_value=True
+        on_behalf_of, pending, default_return_value=True
     ), "!transfer"
     log Withdraw(auction_id, on_behalf_of, msg.sender, pending)
 
@@ -404,6 +410,7 @@ def set_fee(fee: uint256):
 # ============================================================================================
 # Internal functions
 # ============================================================================================
+
 
 @internal
 def _create_auction(ipfs_hash: String[46]) -> uint256:

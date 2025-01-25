@@ -13,6 +13,10 @@ abstract contract Base is Deploy, Test {
     uint256 public constant MIN_FUZZ = 10_000;
     uint256 public constant MAX_FUZZ = 100_000 ether;
     uint256 public constant BID_ONLY = 2;
+    // Nothing --> 1
+    // BidOnly --> 2
+    // WithdrawOnly --> 4
+    // BidAndWithdraw --> 8
 
     function setUp() public virtual {
         // notify deplyment script that this is a test
