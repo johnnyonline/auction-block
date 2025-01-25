@@ -26,7 +26,6 @@ exports: (
     ownable.accept_ownership,
 )
 
-
 initializes: pausable[ownable := ownable]
 exports: (
     pausable.paused,
